@@ -3,7 +3,7 @@ const app = express();
 import dotenv from "dotenv";
 dotenv.config();
 
-import connectDb from "./Db/connectDb.js";
+import connectDb from "./config/connectDb.js";
 connectDb();
 
 import cors from "cors";
