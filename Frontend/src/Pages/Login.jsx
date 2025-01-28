@@ -1,17 +1,54 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import { AppContext } from "../Context/AppContext";
+import axios from "axios";
 
 const Login = () => {
   const Navigate = useNavigate();
 
-  const { backendUrl } = useContext(AppContext);
+  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContext);
 
   const [state, setState] = useState("Sign Up");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      axios.defaults.withCredentials = true;
+
+      if (state === "Sign Up") {
+        const { data } = await axios.post(
+          backendUrl + "/api/v1/users/register-user",
+          { name, email, password }
+        );
+
+        if (data.success) {
+          setIsLoggedIn(true);
+          getUserData();
+          Navigate("/");
+        } else {
+          alert(data.message);
+        }
+      } else {
+        const { data } = await axios.post(
+          backendUrl + "/api/v1/users/login-user",
+          { email, password }
+        );
+
+        if (data.success) {
+          setIsLoggedIn(true);
+          getUserData();
+          Navigate("/");
+        } else {
+          alert(data.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-amber-100">
       <div className="bg-amber-950 p-8 rounded-2xl">
@@ -23,7 +60,7 @@ const Login = () => {
         <h2 className="text-amber-100 text-center">
           {state === "Sign Up" ? "Sign Up" : "Login"}
         </h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           {state === "Sign Up" && (
             <div className="text-white flex items-center gap-2 mb-4 w-full px-5 py-3 rounded-full bg-amber-600">
               <label>Name</label>
@@ -70,7 +107,7 @@ const Login = () => {
           </p>
           <button
             type="submit"
-            className="text-white w-full rounded-full bg-amber-600 py-2.5"
+            className="text-white w-full rounded-full bg-amber-600 py-2.5 cursor-pointer"
           >
             {state}
           </button>

@@ -29,7 +29,7 @@ router.post("/send-otp", userAuth, sendOtp);
 router.post("/verify-otp", userAuth, verifyOtp);
 
 // Authenticated user
-router.post("/is-authenticated", userAuth, isAuthenticated);
+router.get("/is-authenticated", userAuth, isAuthenticated);
 
 // send reset password otp
 router.post("/send-reset-password-otp", sendResetPasswordOtp);
